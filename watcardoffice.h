@@ -1,9 +1,16 @@
 #ifndef WATOFFICE_H
 #define WATOFFICE_H
 
+// TODO: Define "Args"
+// TODO: Includes
+
 _Task WATCardOffice {
-	struct Job {							// marshalled arguments and return future
-		Args args;							// call arguments (YOU DEFINE "Args")
+    Printer &prt;
+	Bank &bank; 
+	unsigned int numCouriers;
+
+	struct Job {                            // marshalled arguments and return future
+        Args args;							// call arguments (YOU DEFINE "Args")
 		WATCard::FWATCard result;			// return future
 		Job( Args args ) : args( args ) {}
 	};

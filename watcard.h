@@ -2,8 +2,11 @@
 #define WATCARD_H
 
 class WATCard {
+	unsigned int balance;
+
 	WATCard( const WATCard & ) = delete;	// prevent copying
 	WATCard & operator=( const WATCard & ) = delete;
+	
   public:
 	typedef Future_ISM<WATCard *> FWATCard;	// future watcard pointer
 	WATCard();
