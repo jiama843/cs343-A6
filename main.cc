@@ -87,7 +87,7 @@ int main( int argc, char* argv[] ) {
 
     // create all the VendingMachines
     VendingMachine* vendingMachines[configParms.numVendingMachines];
-    for ( int i = 0; i < configParms.numVendingMachines; i++ ) {
+    for ( unsigned int i = 0; i < configParms.numVendingMachines; i++ ) {
         vendingMachines[i] = new VendingMachine( printer, nameServer, i, configParms.sodaCost );
     }  // for
 
@@ -96,12 +96,12 @@ int main( int argc, char* argv[] ) {
 
     // create all the Students
     Student* students[configParms.numStudents];
-    for ( int i = 0; i < configParms.numStudents; i++ ) {
+    for ( unsigned int i = 0; i < configParms.numStudents; i++ ) {
         students[i] = new Student( printer, nameServer, watCardOffice, groupoff, i, configParms.maxPurchases );
     }  // for
 
     // delete all of the Students
-    for ( int i = 0; i < configParms.numStudents; i++ ) {
+    for ( unsigned int i = 0; i < configParms.numStudents; i++ ) {
         delete students[i];
     }  // for
 
@@ -115,7 +115,7 @@ int main( int argc, char* argv[] ) {
     delete bottlingPlant;
 
     // delete all of the VendingMachines
-    for ( int i = 0; i < configParms.numVendingMachines; i++ ) {
+    for ( unsigned int i = 0; i < configParms.numVendingMachines; i++ ) {
         delete vendingMachines[i];
     }  // for
 }  // uMain

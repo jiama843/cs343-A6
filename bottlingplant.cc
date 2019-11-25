@@ -1,4 +1,6 @@
 #include "bottlingplant.h"
+#include "truck.h"
+
 #include "MPRNG.h"  // the random number generator
 
 extern MPRNG mprng;  // global random number generator
@@ -27,7 +29,7 @@ extern MPRNG mprng;  // global random number generator
 //  Private Methods
 // ---------------------------------
 void BottlingPlant::main() {
-    printer.print( Printer::Kind::BottlingPlant, 'S' );  // starting
+    prt.print( Printer::Kind::BottlingPlant, 'S' );  // starting
 
     // begin by creating a truck
     Truck truck( prt, nameServer, *this, numVendingMachines, maxStockPerFlavour );
@@ -39,7 +41,7 @@ void BottlingPlant::main() {
              * [0, MaxShippedPerFlavour] per flavour.
              */
             unsigned int sodaQuantity = mprng( maxShippedPerFlavour );
-            printer.print( Printer::Kind::BottlingPlant, 'G', sodaQuantity );  // generating soda
+            prt.print( Printer::Kind::BottlingPlant, 'G', sodaQuantity );  // generating soda
 
             inventory[0] = sodaQuantity;
             inventory[1] = sodaQuantity;
@@ -58,7 +60,7 @@ void BottlingPlant::main() {
             }
             or _Accept( getShipment ) {
                 // shipment picked up by truck
-                printer.print( Printer::Kind::BottlingPlant, 'P' );
+                prt.print( Printer::Kind::BottlingPlant, 'P' );
             }  // _Accept
         } catch ( uMutexFailure::RendezvousFailure& ) {
             // so we know there is a Shutdown here
@@ -66,7 +68,7 @@ void BottlingPlant::main() {
 
     }  // for
 
-    printer.print( Printer::Kind::BottlingPlant, 'F' );  // finished
+    prt.print( Printer::Kind::BottlingPlant, 'F' );  // finished
 }  // BottlingPlant::main
 
 // ---------------------------------
@@ -74,7 +76,11 @@ void BottlingPlant::main() {
 // ---------------------------------
 BottlingPlant::BottlingPlant( Printer& prt, NameServer& nameServer, unsigned int numVendingMachines,
                               unsigned int maxShippedPerFlavour, unsigned int maxStockPerFlavour,
-                              unsigned int timeBetweenShipments ) : prt( prt ), nameServer( nameServer ), numVendingMachines( numVendingMachines ), maxShippedPerFlavour( maxShippedPerFlavour ), maxStockPerFlavour( maxShippedPerFlavour ), timeBetweenShipments( timeBetweenShipments ), inventory( { 0, 0, 0, 0 } ), shouldThrowShutdown( false ) {
+                              unsigned int timeBetweenShipments ) : prt( prt ), nameServer( nameServer ), numVendingMachines( numVendingMachines ), maxShippedPerFlavour( maxShippedPerFlavour ), maxStockPerFlavour( maxStockPerFlavour ), timeBetweenShipments( timeBetweenShipments ), shouldThrowShutdown( false ) {
+    inventory[0] = 0;
+    inventory[1] = 0;
+    inventory[2] = 0;
+    inventory[3] = 0;
 }  // BottlingPlant::BottlingPlant
 
 // ---------------------------------

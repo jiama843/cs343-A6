@@ -16,7 +16,7 @@ extern MPRNG mprng;  // global random number generator
 //  Private Methods
 // ---------------------------------
 void Parent::main() {
-    printer.print( Printer::Kind::Parent, 'S' );  // starting
+    prt.print( Printer::Kind::Parent, 'S' );  // starting
 
     for ( ;; ) {
         /*
@@ -35,13 +35,13 @@ void Parent::main() {
             unsigned int funds     = mprng( 1, 3 );
 
             bank.deposit( studentID, funds );
-            printer.print( Printer::Kind::Parent, 'D', studentID, funds );  // deposit gift
+            prt.print( Printer::Kind::Parent, 'D', studentID, funds );  // deposit gift
 
         }  // _Accept
 
     }  // for
 
-    printer.print( Printer::Kind::Parent, 'F' );  // finished
+    prt.print( Printer::Kind::Parent, 'F' );  // finished
 }  // Parent::main
 
 // ---------------------------------

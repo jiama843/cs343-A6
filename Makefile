@@ -1,10 +1,10 @@
 OUTPUT:=OUTPUT
 
 CXX = u++					# compiler
-CXXFLAGS = -g -multi -O2 -std=c++11 -Wall -Wextra -MMD -D${IMPL} -D${OUTPUT} # compiler flags
+CXXFLAGS = -g -multi -O2 -std=c++11 -Wall -Wextra -MMD -D${OUTPUT} # compiler flags
 MAKEFILE_NAME = ${firstword ${MAKEFILE_LIST}}	# makefile name
 
-OBJECTS = main.o printer.o # list of object files for question 1 prefixed with "q1"
+OBJECTS = printer.o # list of object files for question 1 prefixed with "q1"
 EXEC = soda
 
 DEPENDS = ${OBJECTS:.o=.d}			# substitute ".o" with ".d"
@@ -15,30 +15,8 @@ DEPENDS = ${OBJECTS:.o=.d}			# substitute ".o" with ".d"
 
 all : ${EXEC}					# build all executables
 
--include LockImpl
-
-ifeq (${LOCKIMPL},${IMPL})			# same implementation type as last time ?
 ${EXEC} : ${OBJECTS}
-	${CXX} ${CXXFLAGS} printer.o $^ -o $@
-else
-ifeq (${IMPL},)					# no implementation type specified ?
-# set type to previous type
-IMPL=${LOCKIMPL}
-${EXEC} : ${OBJECTS}
-	${CXX} ${CXXFLAGS} printer.o $^ -o $@
-else						# implementation type has changed
-.PHONY : ${EXEC}
-${EXEC} :
-	rm -f LockImpl
-	touch q2tallyVotes.h
-	sleep 1
-	${MAKE} ${EXEC} IMPL="${IMPL}"
-endif
-endif
-
-LockImpl :
-	echo "LOCKIMPL=${IMPL}" > LockImpl
-	sleep 1
+	${CXX} ${CXXFLAGS} $^ -o $@
 
 #############################################################
 

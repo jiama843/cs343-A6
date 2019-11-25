@@ -29,7 +29,7 @@ void Printer::flush() {
     cout << endl;
 }  // Printer::flush
 
-unsigned int Printer::getBufferIndex( Kind kind, unsigned int lid = 0 ) {
+unsigned int Printer::getBufferIndex( Kind kind, unsigned int lid ) {
     switch ( kind ) {
         case Parent:
             return 0;
@@ -138,7 +138,7 @@ Printer::~Printer() {
 // -----------------------------------
 //  Print Methods
 // -----------------------------------
-void print( Kind kind, char state ) {
+void Printer::print( Kind kind, char state ) {
     unsigned int bufferIndex = getBufferIndex( kind );
     if ( buffer[bufferIndex] ) flush();  // if we're overwriting current buffer, then flush first
 
@@ -152,7 +152,7 @@ void print( Kind kind, char state ) {
     buffer[bufferIndex] = newPrintState;
 }  // Printer::print base overload (parent, groupoff, WATCard office, name server, truck, bottling plant)
 
-void print( Kind kind, char state, unsigned int value1 ) {
+void Printer::print( Kind kind, char state, unsigned int value1 ) {
     unsigned int bufferIndex = getBufferIndex( kind );
     if ( buffer[bufferIndex] ) flush();  // if we're overwriting current buffer, then flush first
 
@@ -167,7 +167,7 @@ void print( Kind kind, char state, unsigned int value1 ) {
     buffer[bufferIndex] = newPrintState;
 }  // Printer::print one value overload (parent, groupoff, WATCard office, name server, truck, bottling plant)
 
-void print( Kind kind, char state, unsigned int value1, unsigned int value2 ) {
+void Printer::print( Kind kind, char state, unsigned int value1, unsigned int value2 ) {
     unsigned int bufferIndex = getBufferIndex( kind );
     if ( buffer[bufferIndex] ) flush();  // if we're overwriting current buffer, then flush first
 
@@ -183,7 +183,7 @@ void print( Kind kind, char state, unsigned int value1, unsigned int value2 ) {
     buffer[bufferIndex] = newPrintState;
 }  // Printer::print two values overload (parent, groupoff, WATCard office, name server, truck, bottling plant)
 
-void print( Kind kind, unsigned int lid, char state ) {
+void Printer::print( Kind kind, unsigned int lid, char state ) {
     unsigned int bufferIndex = getBufferIndex( kind );
     if ( buffer[bufferIndex] ) flush();  // if we're overwriting current buffer, then flush first
 
@@ -198,7 +198,7 @@ void print( Kind kind, unsigned int lid, char state ) {
     buffer[bufferIndex] = newPrintState;
 }  // Printer::print base overload (student, vending machine, courier)
 
-void print( Kind kind, unsigned int lid, char state, unsigned int value1 ) {
+void Printer::print( Kind kind, unsigned int lid, char state, unsigned int value1 ) {
     unsigned int bufferIndex = getBufferIndex( kind );
     if ( buffer[bufferIndex] ) flush();  // if we're overwriting current buffer, then flush first
 
@@ -214,7 +214,7 @@ void print( Kind kind, unsigned int lid, char state, unsigned int value1 ) {
     buffer[bufferIndex] = newPrintState;
 }  // Printer::print one value overload (student, vending machine, courier)
 
-void print( Kind kind, unsigned int lid, char state, unsigned int value1, unsigned int value2 ) {
+void Printer::print( Kind kind, unsigned int lid, char state, unsigned int value1, unsigned int value2 ) {
     unsigned int bufferIndex = getBufferIndex( kind );
     if ( buffer[bufferIndex] ) flush();  // if we're overwriting current buffer, then flush first
 
