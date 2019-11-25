@@ -7,6 +7,8 @@ _Task NameServer {
 	int numStudents;
 	VendingMachine ** vlist;
 
+	int *student_incr; // incremental modulo for each student
+
 	void main();
 
 public:

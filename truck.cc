@@ -30,23 +30,33 @@ void Truck::restock_vending(VendingMachine ** vlist){
   lastVendingMachine++;
 
   for (int i = 0; i < numVendingMachines; i++){
+    printer.print(Printer::state::Truck, 'd', i, cargo[0] + cargo[1] + cargo[2] + cargo[3]);
     int *inv = vlist[i]->inventory();
 
     for(int j = 0; j < NUM_FLAVOURS; j++){
 
       // Fill with as much soda as possible
-      while(inv[j] < maxStockPerFlavour && cargo[j] > 0){
+      for(;;){
+        if (inv[j] >= maxStockPerFlavour) break;
+        if(cargo[j] <= 0){
+          printer.print(Printer::state::Truck, 'U', i, maxStockPerFlavour - inv[j]);
+          break;
+        }
+
         inv[j]++;
         cargo[j]--;
       }
     }
 
+    printer.print(Printer::state::Truck, 'D', i, cargo[0] + cargo[1] + cargo[2] + cargo[3]);
     vlist[i]->restocked();
   }
 }
 
 
 void Truck::main(){
+  printer.print(Printer::state::Truck, 'S');
+
   // Array of pointers to vending machines
   VendingMachine ** vlist = nameServer.getMachineList();
   
@@ -55,10 +65,13 @@ void Truck::main(){
       yield(mprng(1, 10));
       cargo = {0, 0, 0, 0};
       plant.getShipment(cargo);
+      printer.print(Printer::state::Truck, 'P', cargo[0] + cargo[1] + cargo[2] + cargo[3]);
+
       restock_vending(vlist);
     }
   }
   _Catch(BottlingPlant::Shutdown &){
     // handle Shutdown
+    printer.print(Printer::state::Truck, 'F');
   }
 }
