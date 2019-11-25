@@ -3,7 +3,6 @@
 
 extern MPRNG mprng;  // global random number generator
 
-// TODO:
 /*
 
   fields:
@@ -28,6 +27,8 @@ extern MPRNG mprng;  // global random number generator
 //  Private Methods
 // ---------------------------------
 void BottlingPlant::main() {
+    printer.print( Printer::Kind::BottlingPlant, 'S' );  // starting
+
     // begin by creating a truck
     Truck truck( prt, nameServer, *this, numVendingMachines, maxStockPerFlavour );
 
@@ -37,10 +38,13 @@ void BottlingPlant::main() {
              * periodically produce random new quantities of each flavour of soda,
              * [0, MaxShippedPerFlavour] per flavour.
              */
-            inventory[0] = mprng( maxShippedPerFlavour );
-            inventory[1] = mprng( maxShippedPerFlavour );
-            inventory[2] = mprng( maxShippedPerFlavour );
-            inventory[3] = mprng( maxShippedPerFlavour );
+            unsigned int sodaQuantity = mprng( maxShippedPerFlavour );
+            printer.print( Printer::Kind::BottlingPlant, 'G', sodaQuantity );  // generating soda
+
+            inventory[0] = sodaQuantity;
+            inventory[1] = sodaQuantity;
+            inventory[2] = sodaQuantity;
+            inventory[3] = sodaQuantity;
 
             /*
              * To simulate a production run of soda, the bottling plant
@@ -53,7 +57,8 @@ void BottlingPlant::main() {
                 break;
             }
             or _Accept( getShipment ) {
-                // TODO: Do we need to do anything here?
+                // shipment picked up by truck
+                printer.print( Printer::Kind::BottlingPlant, 'P' );
             }  // _Accept
         } catch ( uMutexFailure::RendezvousFailure& ) {
             // so we know there is a Shutdown here
@@ -61,6 +66,7 @@ void BottlingPlant::main() {
 
     }  // for
 
+    printer.print( Printer::Kind::BottlingPlant, 'F' );  // finished
 }  // BottlingPlant::main
 
 // ---------------------------------
