@@ -3,6 +3,14 @@
 // TODO:
 /*
 
+  fields:
+  - constructor
+  - const (MaxStockPerFlavour)
+  - flag (restocked?)
+  - cost
+  - id
+  - map (soda flavor: quantity)
+
   main:
   - Probably loop with _Accept(buy) or _Accept(restock) or _Accept(inventory) etc.
 
