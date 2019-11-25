@@ -4,6 +4,8 @@
 #include "nameserver.h"
 
 _Task Truck {
+	const int NUM_FLAVOURS = 4;
+
 	Printer & prt;
 	NameServer & nameServer;
 	BottlingPlant & plant;

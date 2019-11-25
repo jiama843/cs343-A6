@@ -25,22 +25,40 @@ Truck::Truck( Printer & prt, NameServer & nameServer, BottlingPlant & plant,
   maxStockPerFlavour(maxStockPerFlavour), lastVendingMachine(0) {}
 
 
-void Truck::restock_vending(){
+void Truck::restock_vending(VendingMachine ** vlist){
+  // Start restocking at NEXT vending machine
+  lastVendingMachine++;
 
+  for (int i = 0; i < numVendingMachines; i++){
+    int *inv = vlist[i]->inventory();
+
+    for(int j = 0; j < NUM_FLAVOURS; j++){
+
+      // Fill with as much soda as possible
+      while(inv[j] < maxStockPerFlavour && cargo[j] > 0){
+        inv[j]++;
+        cargo[j]--;
+      }
+    }
+
+    vlist[i]->restocked();
+  }
 }
 
 
 void Truck::main(){
+  // Array of pointers to vending machines
   VendingMachine ** vlist = nameServer.getMachineList();
   
-  try {  
-    yield(1, 10);
-    cargo = {0, 0, 0, 0};
-    plant.getShipment(cargo);
-    restock_vending();
+  try {
+    for(;;){
+      yield(mprng(1, 10));
+      cargo = {0, 0, 0, 0};
+      plant.getShipment(cargo);
+      restock_vending(vlist);
+    }
   }
-  catch(BottlingPlant::Shutdown){
+  _Catch(BottlingPlant::Shutdown &){
     // handle Shutdown
   }
-
 }
