@@ -30,6 +30,8 @@ int main( int argc, char* argv[] ) {
     string configFile = "soda.config";  // contains the configuration constants
     int    seed       = getpid();       // starting seed for the random number generator
 
+    ConfigParms configParms;  // the struct that contains the configuration parameters
+
     try {
         switch ( argc ) {
             case 3:
@@ -62,6 +64,7 @@ int main( int argc, char* argv[] ) {
     //      - Call processConfigFile
     // -----------------------------------
     mprng.set_seed( seed );
+    processConfigFile( configFile, configParms );
 
     // -----------------------------------
     //  Create objects in the following order:
@@ -75,6 +78,44 @@ int main( int argc, char* argv[] ) {
     //      - BottlingPlant
     //      - Students
     // -----------------------------------
+    Printer       printer( configParms.numStudents, configParms.numVendingMachines, configParms.numCouriers );  // create a printer object with number of voters
+    Bank          bank( configParms.numStudents );
+    Parent        parent( printer, bank, configParms.numStudents, configParms.parentalDelay );
+    WATCardOffice watCardOffice( printer, bank, configParms.numCouriers );
+    Groupoff      groupoff( printer, configParms.numStudents, configParms.sodaCost, configParms.groupoffDelay );
+    NameServer    nameServer( printer, configParms.numVendingMachines, configParms.numStudents );
 
+    // create all the VendingMachines
+    VendingMachine* vendingMachines[configParms.numVendingMachines];
+    for ( int i = 0; i < configParms.numVendingMachines; i++ ) {
+        vendingMachines[i] = new VendingMachine( printer, nameServer, i, configParms.sodaCost );
+    }  // for
 
+    // dynamically allocate this so that we can control its lifetime
+    BottlingPlant* bottlingPlant = new BottlingPlant( printer, nameServer, configParms.numVendingMachines, configParms.maxShippedPerFlavour, configParms.maxStockPerFlavour, configParms.timeBetweenShipments );
+
+    // create all the Students
+    Student* students[configParms.numStudents];
+    for ( int i = 0; i < configParms.numStudents; i++ ) {
+        students[i] = new Student( printer, nameServer, watCardOffice, groupoff, i, configParms.maxPurchases );
+    }  // for
+
+    // delete all of the Students
+    for ( int i = 0; i < configParms.numStudents; i++ ) {
+        delete students[i];
+    }  // for
+
+    /*
+     * Note, there is one trick in closing down the system: 
+     * 
+     * Delete the bottling plant before deleting the vending machines to
+     * allow the truck to complete its final deliveries to the vending
+     * machines; otherwise, a deadlock can occur.
+     */
+    delete bottlingPlant;
+
+    // delete all of the VendingMachines
+    for ( int i = 0; i < configParms.numVendingMachines; i++ ) {
+        delete vendingMachines[i];
+    }  // for
 }  // uMain
