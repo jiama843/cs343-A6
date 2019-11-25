@@ -8,7 +8,7 @@
 #include "bank.h"            // the Bank Monitor
 #include "bottlingplant.h"   // the BottlingPlant Task
 #include "config.h"          // the ConfigParms struct
-#include "group.h"           // the Groupoff Task
+#include "groupoff.h"        // the Groupoff Task
 #include "nameserver.h"      // the NameServer Task
 #include "parent.h"          // the Parent Task
 #include "printer.h"         // the Printer Monitor
