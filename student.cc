@@ -37,12 +37,15 @@ using namespace std;
 //  Private Methods
 // ---------------------------------
 void Student::main() {
-
     unsigned int num_bottles = mprng(1, maxPurchases);
     unsigned int flavour = mprng(3);
+    prt.print(Printer::Kind::Student, 'S', flavour, num_bottles);
+
     WATCard::FWATCard wc = cardOffice.create(id, 5); // Create 5$ WATCard
     WATCard::FWATCard gc = groupoff.giftcard(); // Get future giftcard
     VendingMachine *vm = nameServer.getMachine(id); // Get vending machine location
+
+    prt.print(Printer::Kind::Student, 'V', vm->getId());
 
     for(int i = 0; i < num_bottles; i++){
         // Before buying soda
@@ -62,11 +65,28 @@ void Student::main() {
             try{
                 try{
                     vm.buy(flavour, card);
-                    if(card == gc) gc.reset(); // Reset funds if giftcard
+
+                    if (card == wc){
+                        prt.print(Printer::Kind::Student, 'W', flavour, card->getBalance());
+                    }
+                    else if(card == gc){
+                        prt.print(Printer::Kind::Student, 'G', flavour, card->getBalance());
+                        gc.reset(); // Reset funds if giftcard
+                    }
+
                     break;
                 }
                 _Catch (VendingMachine::Free &){
                     yield(4 * 10);
+
+                    if (card == wc){
+                        prt.print(Printer::Kind::Student, 'A', flavour, card->getBalance());
+                    }
+                    else if(card == gc){
+                        prt.print(Printer::Kind::Student, 'a', flavour, card->getBalance());
+                    }
+
+                    break;
                 }
                 _Catch (VendingMachine::Funds &){
                     if(card == wc){
@@ -78,11 +98,13 @@ void Student::main() {
                 }
             }
             _Catch(WATCardOffice::Lost){ // Catch courier exception if lost
+                prt.print(Printer::Kind::Student, 'L');
                 wc = cardOffice.create(id, 5); // Create 5$ WATCard
             }
         }
     }
 
+    prt.print(Printer::Kind::Student, 'F');
 }  // Student::main
 
 // ---------------------------------

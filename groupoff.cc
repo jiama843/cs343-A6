@@ -16,6 +16,7 @@ Groupoff::Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCo
 cards(new WATCard::WATCard[numStudents]) {}
 
 void Groupoff::main(){
+  prt.print(Printer::Kind::Groupoff, 'S');
   for(int i = 0; i < numStudents; i++){
     _Accept(giftCard);
   }
@@ -30,6 +31,8 @@ void Groupoff::main(){
       // Choose future watcard that has not yet been assigned
       unsigned int card_no = mprng(fcards.size() - 1);
 
+      prt.print(Printer::Kind::Groupoff, 'D', sodaCost);
+
       // Put real WATCard into random card
       WATCard::WATCard *card = new WATCard();
       card->deposit(sodaCost);
@@ -37,6 +40,7 @@ void Groupoff::main(){
       fcards.erase(fcards.begin() + card_no);
     }
   }
+  prt.print(Printer::Kind::Groupoff, 'F');
 }
 
 WATCard::FWATCard Groupoff::giftCard(){
