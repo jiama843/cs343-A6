@@ -68,14 +68,13 @@ void WATCardOffice::Courier::main() {
         args.card->deposit( args.amount );
 
         // 1 in 6 chance to lose WATCard
-        if ( mprng( 5 ) == 0 ) {
+        if ( mprng( 1, 6 ) == 1 ) {
             job->result.exception( new Lost() );
             prt.print( Printer::Kind::Courier, id, 'L', args.sid );  // lost WATCard card
         } else {
             job->result.delivery( args.card );
             prt.print( Printer::Kind::Courier, id, 'T', args.sid, args.amount );  // complete funds transfer
-
-        }  // if
+        }                                                                         // if
 
         // job satisfied, safe to delete
         delete job;
@@ -129,7 +128,12 @@ void WATCardOffice::main() {
 //  Constructor and Destructor
 // ---------------------------------
 WATCardOffice::WATCardOffice( Printer& prt, Bank& bank, unsigned int numCouriers ) : prt( prt ), bank( bank ), numCouriers( numCouriers ) {
+    /*
+     *  --> Begin by:
+     *      - Creating a fixed-size courier pool
+     */
     couriers = new Courier*[numCouriers];
+
     for ( unsigned int i = 0; i < numCouriers; i++ ) {
         couriers[i] = new Courier( prt, bank, *this, i );
     }  // for
@@ -154,7 +158,7 @@ WATCard::FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount )
     recentSID    = sid;
     recentAmount = amount;
 
-    // so that we can delete this later
+    // save the WATCard in a vector so that we can delete it later
     WATCard* newCard = new WATCard();
     createdCards.push_back( newCard );
 
@@ -163,6 +167,7 @@ WATCard::FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount )
     Job* newJob = new Job( args );
     jobQueue.push( newJob );
 
+    // return future WATCard, sufficient funds are subsequently obtained from the bank via a courier
     return newJob->result;
 }  // WATCardOffice::create
 
@@ -176,12 +181,14 @@ WATCard::FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount
     Job* newJob = new Job( args );
     jobQueue.push( newJob );
 
+    // return future WATCard, sufficient funds are subsequently obtained from the bank via a courier
     return newJob->result;
 }  // WATCardOffice::transfer
 
 WATCardOffice::Job* WATCardOffice::requestWork() {
     if ( jobQueue.empty() ) return NULL;
 
+    // grab earliest job from the queue
     Job* newJob = jobQueue.front();
     jobQueue.pop();
 
