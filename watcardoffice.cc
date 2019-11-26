@@ -7,8 +7,6 @@
 
 extern MPRNG mprng;  // global random number generator
 
-using namespace std;
-
 /**
  *  --> Begin by:
  *      - Creating a fixed-size courier pool
@@ -61,6 +59,7 @@ void WATCardOffice::Courier::main() {
         Job* job = cardOffice.requestWork();
         if ( job == NULL ) break;
 
+        // refer to page 176 of course notes for reference
         Args args = job->args;
         prt.print( Printer::Kind::Courier, id, 't', args.sid, args.amount );  // start funds transfer
 
@@ -151,6 +150,7 @@ WATCardOffice::~WATCardOffice() {
 //  Public Methods
 // ---------------------------------
 WATCard::FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
+    // refer to page 176 of course notes for reference on implementing "perform"
     recentSID    = sid;
     recentAmount = amount;
 
@@ -167,6 +167,7 @@ WATCard::FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount )
 }  // WATCardOffice::create
 
 WATCard::FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard* card ) {
+    // refer to page 176 of course notes for reference on implementing "perform"
     recentSID    = sid;
     recentAmount = amount;
 
