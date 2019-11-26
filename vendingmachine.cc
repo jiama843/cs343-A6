@@ -45,7 +45,10 @@ VendingMachine::VendingMachine( Printer & prt, NameServer & nameServer, unsigned
 void VendingMachine::main(){
   prt.print(Printer::VendingMachine, 'S', sodaCost);
   for(;;){
-    _Accept(inventory){
+    _Accept(~VendingMachine) {
+      break;
+    }
+    or _Accept(inventory){
 
       // Can only buy after restocking is complete
       _Accept(restocked){}
@@ -63,10 +66,10 @@ void VendingMachine::main(){
       card.withdraw(sodaCost); // Debit WATcard
       stock[flavour]--; // Dispense soda
 
-      prt.print(Printer::VendingMachine, 'B', flavour, stock[flavour]);
+      prt.print(Printer::Kind::VendingMachine, 'B', flavour, stock[flavour]);
     }
   }
-  prt.print(Printer::VendingMachine, 'F');
+  prt.print(Printer::Kind::VendingMachine, 'F');
 }
 
 void VendingMachine::buy( Flavours flavour, WATCard & card ){
@@ -76,12 +79,12 @@ void VendingMachine::buy( Flavours flavour, WATCard & card ){
 }
 
 unsigned int * VendingMachine::inventory(){
-  prt.print(Printer::VendingMachine, 'r');
+  prt.print(Printer::Kind::VendingMachine, 'r');
   return stock;
 }
 
 void VendingMachine::restocked(){
-  prt.print(Printer::VendingMachine, 'R');
+  prt.print(Printer::Kind::VendingMachine, 'R');
 }
 
 _Nomutex unsigned int VendingMachine::cost() const{

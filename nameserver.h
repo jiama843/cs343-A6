@@ -1,13 +1,15 @@
 #ifndef NAME_SERVER_H
 #define NAME_SERVER_H
 
+#include "printer.h"
+
 _Task NameServer {
 	Printer &prt;
-	int numVendingMachines;
-	int numStudents;
+	unsigned int numVendingMachines;
+	unsigned int numStudents;
 	VendingMachine ** vlist;
 
-	int *student_incr; // incremental modulo for each student
+	unsigned int *student_incr; // incremental modulo for each student
 
 	void main();
 

@@ -1,7 +1,9 @@
 #ifndef VENDINGMACHINE_H
 #define VENDINGMACHINE_H
 
+#include "printer.h"
 #include "watcard.h"
+#include "nameserver.h"
 
 _Task VendingMachine {
 	int id;
