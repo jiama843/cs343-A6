@@ -28,6 +28,7 @@ Truck::Truck( Printer & prt, NameServer & nameServer, BottlingPlant & plant,
 void Truck::restock_vending(VendingMachine ** vlist){
   // Start restocking at NEXT vending machine
   lastVendingMachine++;
+  lastVendingMachine %= numVendingMachines;
 
   for (int i = 0; i < numVendingMachines; i++){
     printer.print(Printer::state::Truck, 'd', i, cargo[0] + cargo[1] + cargo[2] + cargo[3]);

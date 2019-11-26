@@ -26,19 +26,39 @@
 
 NameServer::NameServer( Printer & prt, unsigned int numVendingMachines, unsigned int numStudents )
 : prt(prt), numVendingMachines(numVendingMachines), numStudents(numStudents), 
-vlist(new *VendingMachine[numVendingMachines]), student_incr(new int[newnumStudents]) {}
+vlist(new *VendingMachine[numVendingMachines]), student_incr(new int[numStudents]) {
+  for (int i = 0; i < numStudents; i++){
+    student_incr[i] = 0;
+  }
+}
 
 void NameServer::main(){
+  prt.print(Printer::NameServer, 'S');
 
+  for(int i = 0; i < numVendingMachines; i++){
+    _Accept(VMregister);
+  }
+
+  for(;;){
+    _Accept(~NameServer) break;
+  }
+
+  delete[] vlist;
+
+  prt.print(Printer::NameServer, 'F');
 }
 
 void NameServer::VMregister( VendingMachine * vendingmachine ){
+  prt.print(Printer::NameServer, 'V', vendingmachine.id);
   vlist[vendingmachine.id] = vendingmachine;
 }
 
 VendingMachine * NameServer::getMachine( unsigned int id ){
   student_incr[id]++;
-  return vlist[(id + student_incr[id]) % numVendingMachines];
+  VendingMachine *v = vlist[(id + student_incr[id]) % numVendingMachines];
+
+  printer.print(Printer::NameServer, 'N', id, v->getId());
+  return v;
 }
 
 VendingMachine ** NameServer::getMachineList(){

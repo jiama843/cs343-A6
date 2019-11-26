@@ -43,6 +43,7 @@ VendingMachine::VendingMachine( Printer & prt, NameServer & nameServer, unsigned
 : prt(prt), nameServer(nameServer), id(id), sodaCost(sodaCost) {}
 
 void VendingMachine::main(){
+  prt.print(Printer::VendingMachine, 'S', sodaCost);
   for(;;){
     _Accept(inventory){
 
@@ -60,8 +61,12 @@ void VendingMachine::main(){
       if(mprng(1, 5) == 1) _Throw Free{};
 
       card.withdraw(sodaCost); // Debit WATcard
+      stock[flavour]--; // Dispense soda
+
+      prt.print(Printer::VendingMachine, 'B', flavour, stock[flavour]);
     }
   }
+  prt.print(Printer::VendingMachine, 'F');
 }
 
 void VendingMachine::buy( Flavours flavour, WATCard & card ){
@@ -71,10 +76,13 @@ void VendingMachine::buy( Flavours flavour, WATCard & card ){
 }
 
 unsigned int * VendingMachine::inventory(){
+  prt.print(Printer::VendingMachine, 'r');
   return stock;
 }
 
-void VendingMachine::restocked(){}
+void VendingMachine::restocked(){
+  prt.print(Printer::VendingMachine, 'R');
+}
 
 _Nomutex unsigned int VendingMachine::cost() const{
   return sodaCost;
