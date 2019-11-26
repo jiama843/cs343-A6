@@ -1,29 +1,38 @@
 #include "bank.h"
 
-using namespace std;
-
 /**
- * TODO:
  *  - Create student accounts with $0 balances
  *  - Parent calls deposit for a specific student
  *  - Courier calls withdraw to transfer money
  */
 
-
 // ---------------------------------
-//  Constructor
+//  Constructor and Destructor
 // ---------------------------------
-Bank::Bank( unsigned int numStudents ) : numStudents( numStudents ) {
-    // TODO: Make that data structure
+Bank::Bank( unsigned int numStudents ) : numStudents( numStudents ), accounts( new unsigned int[numStudents] ) {
+    for ( unsigned int i = 0; i < numStudents; i++ ) {
+        // fill the accouts with $0
+        accounts[i] = 0;
+    }  // for
 }  // Bank::Bank
+
+Bank::~Bank() {
+    delete[] accounts;
+}  // Bank::~Bank
 
 // ---------------------------------
 //  Public Methods
 // ---------------------------------
 void Bank::deposit( unsigned int id, unsigned int amount ) {
-    // TODO
+    accounts[id] += amount;
 }  // Bank::deposit
 
 void Bank::withdraw( unsigned int id, unsigned int amount ) {
-    // TODO
+    for ( ;; ) {
+        // wait until there is enough money in the account
+        if ( accounts[id] >= amount ) break;
+        _Accept( deposit );
+    }  // for
+
+    accounts[id] -= amount;
 }  // Bank::withdraw

@@ -1,9 +1,6 @@
 #include "watcard.h"
 
-using namespace std;
-
 /**
- * TODO:
  *  - Create with $0 balance
  *  - Courier calls deposit after a funds transfer
  *  - VendingMachine calls withdraw when a soda is purchased
@@ -12,23 +9,21 @@ using namespace std;
  *          access to the WATCard between the student and the courier.
  */
 
-
 // ---------------------------------
 //  Constructor
 // ---------------------------------
 WATCard::WATCard() : balance( 0 ) {
-
 }  // WATCard::WATCard
 
 // ---------------------------------
 //  Public Methods
 // ---------------------------------
 void WATCard::deposit( unsigned int amount ) {
-    // TODO
+    balance += amount;
 }  // WATCard::deposit
 
 void WATCard::withdraw( unsigned int amount ) {
-    // TODO
+    balance -= amount;
 }  // WATCard::withdraw
 
 unsigned int WATCard::getBalance() {
