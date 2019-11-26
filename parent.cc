@@ -1,8 +1,6 @@
 #include "parent.h"
 #include "printer.h"
 
-using namespace std;
-
 extern MPRNG mprng;  // global random number generator
 
 /**
@@ -31,7 +29,7 @@ void Parent::main() {
         _Else {
             yield( parentalDelay );
 
-            unsigned int studentID = mprng( numStudents );
+            unsigned int studentID = mprng( numStudents - 1 );
             unsigned int funds     = mprng( 1, 3 );
 
             bank.deposit( studentID, funds );

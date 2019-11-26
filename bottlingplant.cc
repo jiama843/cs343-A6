@@ -77,10 +77,7 @@ void BottlingPlant::main() {
 BottlingPlant::BottlingPlant( Printer& prt, NameServer& nameServer, unsigned int numVendingMachines,
                               unsigned int maxShippedPerFlavour, unsigned int maxStockPerFlavour,
                               unsigned int timeBetweenShipments ) : prt( prt ), nameServer( nameServer ), numVendingMachines( numVendingMachines ), maxShippedPerFlavour( maxShippedPerFlavour ), maxStockPerFlavour( maxStockPerFlavour ), timeBetweenShipments( timeBetweenShipments ), shouldThrowShutdown( false ) {
-    inventory[0] = 0;
-    inventory[1] = 0;
-    inventory[2] = 0;
-    inventory[3] = 0;
+    inventory = { 0, 0, 0, 0 };
 }  // BottlingPlant::BottlingPlant
 
 // ---------------------------------

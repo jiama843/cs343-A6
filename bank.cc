@@ -17,7 +17,7 @@ Bank::Bank( unsigned int numStudents ) : numStudents( numStudents ), accounts( n
 }  // Bank::Bank
 
 Bank::~Bank() {
-    delete accounts;
+    delete[] accounts;
 }  // Bank::~Bank
 
 // ---------------------------------
@@ -28,5 +28,11 @@ void Bank::deposit( unsigned int id, unsigned int amount ) {
 }  // Bank::deposit
 
 void Bank::withdraw( unsigned int id, unsigned int amount ) {
+    for ( ;; ) {
+        // wait until there is enough money in the account
+        if ( accounts[id] >= amount ) break;
+        _Accept( deposit );
+    }  // for
+
     accounts[id] -= amount;
 }  // Bank::withdraw
