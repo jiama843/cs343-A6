@@ -1,68 +1,76 @@
 #include "nameserver.h"
+#include "vendingmachine.h"
 
-// TODO:
-/*
+/**
+ * fields:
+ * - Map (id: vending machine)
+ * - list (vending machines)
+ * - incremental int (from 1 to infinity) -> modulo numVendingMachines
+ *
+ * main:
+ * - loop through all student ids 
+ *   - assign student vending machine sequentially
+ *
+ * VMregister:
+ * - Called by vending machines -> set vending machine id (need field)
+ *
+ * getMachineList:
+ * - return list of all vending machines (need list field)
+ *
+ * getMachine:
+ * - Use student id to map to a vending machine(map)
+ *   - return getMachineList[incremental int % getMachineList.size()] (modulo incrementing)
+ */
 
-  fields:
-  - Map (id: vending machine)
-  - list (vending machines)
-  - incremental int (from 1 to infinity) -> modulo numVendingMachines
+// -----------------------------------
+//  Constructor and Destructor
+// ----------------------------------
+NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ) : prt( prt ), numVendingMachines( numVendingMachines ), numStudents( numStudents ), vlist( new VendingMachine *[numVendingMachines] ), student_incr( new unsigned int[numStudents] ) {
+    for ( unsigned int i = 0; i < numStudents; i++ ) {
+        student_incr[i] = 0;
+    }  // for
+}  // NameServer::NameServer
 
-  main:
-  - loop through all student ids 
-    - assign student vending machine sequentially
+NameServer::~NameServer() {
+    delete[] vlist;
+}  // NameServer::~NameServer
 
-  VMregister:
-  - Called by vending machines -> set vending machine id (need field)
+// -----------------------------------
+//  Mutex Methods
+// ----------------------------------
+void NameServer::VMregister( VendingMachine *vendingmachine ) {
+    prt.print( Printer::Kind::NameServer, 'R', vendingmachine->getId() );  // register vending machine
+    vlist[vendingmachine->getId()] = vendingmachine;
+}  // NameServer::VMregister
 
-  getMachineList:
-  - return list of all vending machines (need list field)
+VendingMachine *NameServer::getMachine( unsigned int id ) {
+    VendingMachine *v = vlist[( id + student_incr[id] ) % numVendingMachines];
+    student_incr[id]++;
 
-  getMachine:
-  - Use student id to map to a vending machine(map)
-    - return getMachineList[incremental int % getMachineList.size()] (modulo incrementing)
+    prt.print( Printer::Kind::NameServer, 'N', id, v->getId() );  // new vending machine
+    return v;
+}  // NameServer::getMachine
 
-*/
+VendingMachine **NameServer::getMachineList() {
+    return vlist;
+}  // NameServer::getMachineList
 
-NameServer::NameServer( Printer & prt, unsigned int numVendingMachines, unsigned int numStudents )
-: prt(prt), numVendingMachines(numVendingMachines), numStudents(numStudents), 
-vlist(new VendingMachine*[numVendingMachines]), student_incr(new int[numStudents]) {
-  for (unsigned int i = 0; i < numStudents; i++){
-    student_incr[i] = 0;
-  }
-}
+// -----------------------------------
+//  Task Main
+// ----------------------------------
+void NameServer::main() {
+    prt.print( Printer::Kind::NameServer, 'S' );  // starting
 
-void NameServer::main(){
-  prt.print(Printer::Kind::NameServer, 'S');
+    for ( unsigned int i = 0; i < numVendingMachines; i++ ) {
+        _Accept( VMregister );
+    }  // for
 
-  for(int i = 0; i < numVendingMachines; i++){
-    _Accept(VMregister);
-  }
+    for ( ;; ) {
+        _Accept( ~NameServer ) {
+            break;
+        }
+        or _Accept( getMachine, getMachineList );
+    }  // for
 
-  for(;;){
-    _Accept(~NameServer){
-      break;
-    } or _Accept( getMachine, getMachineList );
-  }
-
-  delete[] vlist;
-
-  prt.print(Printer::Kind::NameServer, 'F');
-}
-
-void NameServer::VMregister( VendingMachine * vendingmachine ){
-  prt.print(Printer::Kind::NameServer, 'V', vendingmachine.id);
-  vlist[vendingmachine.id] = vendingmachine;
-}
-
-VendingMachine * NameServer::getMachine( unsigned int id ){
-  VendingMachine *v = vlist[(id + student_incr[id]) % numVendingMachines];
-  student_incr[id]++;
-
-  printer.print(Printer::Kind::NameServer, 'N', id, v->getId());
-  return v;
-}
-
-VendingMachine ** NameServer::getMachineList(){
-  return vlist;
-}
+    prt.print( Printer::Kind::NameServer, 'F' );  // finished
+}  // NameServer::main
