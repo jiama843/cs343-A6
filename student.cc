@@ -45,6 +45,7 @@ void Student::main() {
     WATCard::FWATCard wc = cardOffice.create( id, 5 );   // Create 5$ WATCard
     WATCard::FWATCard gc = groupoff.giftCard();          // Get future giftcard
     VendingMachine *  vm = nameServer.getMachine( id );  // Get vending machine location
+    WATCard *         card;
 
     prt.print( Printer::Kind::Student, id, 'V', vm->getId() );  // selecting vending machine
 
@@ -53,64 +54,55 @@ void Student::main() {
         yield( mprng( 1, 10 ) );
 
         // Block until either card is available
-        WATCard *card;
         for ( ;; ) {
-            try {
-                _Select( gc ) {
+            _Select( gc ) {
+                try {
                     card = gc();  // Groupoff never throws Lost
-                }
-                or _Select( wc ) {
-                    card = wc();
-                }  // _Select
+                    vm->buy( flavour, *card );
 
-                break;
-            }
-            _Catch( WATCardOffice::Lost & ) {  // Catch courier exception if lost
-                // WATCard lost
-                prt.print( Printer::Kind::Student, id, 'L' );
-
-                // Create 5$ WATCard
-                wc = cardOffice.create( id, 5 );
-            }  // _Catch
-
-        }  // for
-
-        // TODO: catch Lost from transfer
-        for ( ;; ) {
-            // Attempt to buy soda
-            try {
-                vm->buy( flavour, *card );
-
-                if ( card == wc ) {
-                    prt.print( Printer::Kind::Student, id, 'B', flavour, card->getBalance() );  // bought soda
-                } else if ( card == gc ) {
                     prt.print( Printer::Kind::Student, id, 'G', flavour, card->getBalance() );  // gift-card soda
 
                     // reset funds if giftcard
                     gc.reset();
-                }  // if
-
-                break;
-            }
-            _Catch( VendingMachine::Free & ) {
-                yield( 4 );
-
-                if ( card == wc ) {
-                    prt.print( Printer::Kind::Student, id, 'A', flavour, card->getBalance() );  // free soda, advertisement
-                } else if ( card == gc ) {
+                    break;
+                }
+                _Catch( VendingMachine::Free & ) {
+                    yield( 4 );
                     prt.print( Printer::Kind::Student, id, 'a', flavour, card->getBalance() );  // free soda, advertisement
+                }
+                _Catch( VendingMachine::Stock & ) {
+                    // Get another vending machine
+                    vm = nameServer.getMachine( id );
+                }  // _Catch
+            }
+            or _Select( wc ) {
+                try {
+                    card = wc();
+                    vm->buy( flavour, *card );
 
-                }  // if
-            }
-            _Catch( VendingMachine::Funds & ) {
-                if ( card == wc ) {
-                    cardOffice.transfer( id, vm->cost() + 5, card );
-                }  // if
-            }
-            _Catch( VendingMachine::Stock & ) {
-                // Get another vending machine
-                vm = nameServer.getMachine( id );
-            }  // _Catch
+                    prt.print( Printer::Kind::Student, id, 'B', flavour, card->getBalance() );  // bought soda
+                    break;
+                }
+                _Catch( VendingMachine::Free & ) {
+                    yield( 4 );
+                    prt.print( Printer::Kind::Student, id, 'A', flavour, card->getBalance() );  // free soda, advertisement
+                }
+                _Catch( VendingMachine::Funds & ) {
+                    cardOffice.transfer( id, vm->cost() + 5, card );  // transfer some more money into our WATCard
+                }
+                _Catch( WATCardOffice::Lost & ) {  // Catch courier exception if lost
+                    // WATCard lost
+                    prt.print( Printer::Kind::Student, id, 'L' );
+
+                    // Create 5$ WATCard
+                    wc = cardOffice.create( id, 5 );
+                }
+                _Catch( VendingMachine::Stock & ) {
+                    // Get another vending machine
+                    vm = nameServer.getMachine( id );
+                }  // _Catch
+
+            }  // _Select
 
         }  // for
 

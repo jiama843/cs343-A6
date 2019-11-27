@@ -10,19 +10,20 @@
 extern MPRNG mprng;
 
 _Task Groupoff {
-	Printer &prt;
-	unsigned int numStudents;
-	unsigned int sodaCost;
-	unsigned int groupoffDelay;
+    Printer&     prt;
+    unsigned int numStudents;
+    unsigned int sodaCost;
+    unsigned int groupoffDelay;
 
-	std::vector<WATCard*> cardlist; // list of pointers to watcards
-	std::vector<WATCard::FWATCard> fcards; // list of future watcards
-	void main();
+    std::vector< WATCard* >          cardlist;  // list of pointers to watcards
+    std::vector< WATCard::FWATCard > fcards;    // list of future watcards
 
-public:
-	Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay );
-	~Groupoff();
-	WATCard::FWATCard giftCard();
+    void main();
+
+   public:
+    Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay );
+    ~Groupoff();
+    WATCard::FWATCard giftCard();
 };
 
 #endif

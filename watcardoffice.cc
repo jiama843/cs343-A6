@@ -68,13 +68,14 @@ void WATCardOffice::Courier::main() {
         args.card->deposit( args.amount );
 
         // 1 in 6 chance to lose WATCard
-        if ( true /* mprng( 1, 6 ) == 1 */ ) {
+        if ( mprng( 1, 6 ) == 1 ) {
             job->result.exception( new Lost() );
             prt.print( Printer::Kind::Courier, id, 'L', args.sid );  // lost WATCard card
         } else {
             job->result.delivery( args.card );
             prt.print( Printer::Kind::Courier, id, 'T', args.sid, args.amount );  // complete funds transfer
-        }                                                                         // if
+
+        }  // if
 
         // job satisfied, safe to delete
         delete job;

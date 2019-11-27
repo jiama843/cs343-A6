@@ -12,7 +12,10 @@
 */
 
 Groupoff::Groupoff( Printer &prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay )
-    : prt( prt ), numStudents( numStudents ), sodaCost( sodaCost ), groupoffDelay( groupoffDelay ) {}
+    : prt( prt ), numStudents( numStudents ), sodaCost( sodaCost ), groupoffDelay( groupoffDelay ) {
+    cardlist.reserve( numStudents );  // we know that we will have numStudents number of WATCards, so reserve in advance
+                                      // so that we don't dynamically allocate more memory as we add cards to the vector
+}  // Groupoff::Groupoff
 
 Groupoff::~Groupoff() {
     for ( unsigned int i = 0; i < cardlist.size(); i++ ) {
