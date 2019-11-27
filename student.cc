@@ -38,33 +38,33 @@ using namespace std;
 // ---------------------------------
 void Student::main() {
     unsigned int num_bottles = mprng(1, maxPurchases);
-    unsigned int flavour = mprng(3);
+    VendingMachine::Flavours flavour = (VendingMachine::Flavours)mprng(3);
     prt.print(Printer::Kind::Student, 'S', id, flavour, num_bottles);
 
     WATCard::FWATCard wc = cardOffice.create(id, 5); // Create 5$ WATCard
-    WATCard::FWATCard gc = groupoff.giftcard(); // Get future giftcard
+    WATCard::FWATCard gc = groupoff.giftCard(); // Get future giftcard
     VendingMachine *vm = nameServer.getMachine(id); // Get vending machine location
 
-    prt.print(Printer::Kind::Student, 'V', id,  vm->getId());
+    prt.print(Printer::Kind::Student, 'V', id, vm->getId());
 
     for(unsigned int i = 0; i < num_bottles; i++){
         // Before buying soda
         yield(mprng(1, 10));
 
         // Block until either card is available
-        WATCard::WATCard *card;
+        WATCard *card;
         _Select(gc){
-            *card = &gc();
+            card = gc();
         }
         or _Select(wc){
-            *card = &wc();
+            card = wc();
         }
 
         for(;;){
             // Attempt to buy soda
             try{
                 try{
-                    vm.buy(flavour, card);
+                    vm->buy(flavour, *card);
 
                     if (card == wc){
                         prt.print(Printer::Kind::Student, 'B', id, flavour, card->getBalance());
@@ -88,14 +88,14 @@ void Student::main() {
                 }
                 _Catch (VendingMachine::Funds &){
                     if(card == wc){
-                        cardOffice.transfer(id, vm.cost() + 5, card);
+                        cardOffice.transfer(id, vm->cost() + 5, card);
                     }
                 }
                 _Catch (VendingMachine::Stock &){
                     vm = nameServer.getMachine(id); // Get another vending machine
                 }
             }
-            _Catch(WATCardOffice::Lost){ // Catch courier exception if lost
+            _Catch(WATCardOffice::Lost &){ // Catch courier exception if lost
                 prt.print(Printer::Kind::Student, 'L', id);
                 wc = cardOffice.create(id, 5); // Create 5$ WATCard
             }
