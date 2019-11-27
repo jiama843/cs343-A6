@@ -37,7 +37,72 @@ using namespace std;
 //  Private Methods
 // ---------------------------------
 void Student::main() {
+    unsigned int num_bottles = mprng(1, maxPurchases);
+    VendingMachine::Flavours flavour = (VendingMachine::Flavours)mprng(3);
+    prt.print(Printer::Kind::Student, 'S', id, flavour, num_bottles);
 
+    WATCard::FWATCard wc = cardOffice.create(id, 5); // Create 5$ WATCard
+    WATCard::FWATCard gc = groupoff.giftCard(); // Get future giftcard
+    VendingMachine *vm = nameServer.getMachine(id); // Get vending machine location
+
+    prt.print(Printer::Kind::Student, 'V', id, vm->getId());
+
+    for(unsigned int i = 0; i < num_bottles; i++){
+        // Before buying soda
+        yield(mprng(1, 10));
+
+        // Block until either card is available
+        WATCard *card;
+        _Select(gc){
+            card = gc();
+        }
+        or _Select(wc){
+            card = wc();
+        }
+
+        for(;;){
+            // Attempt to buy soda
+            try{
+                try{
+                    vm->buy(flavour, *card);
+
+                    if (card == wc){
+                        prt.print(Printer::Kind::Student, id, 'B', flavour, card->getBalance());
+                    }
+                    else if(card == gc){
+                        prt.print(Printer::Kind::Student, id, 'G', flavour, card->getBalance());
+                        gc.reset(); // Reset funds if giftcard
+                    }
+
+                    break;
+                }
+                _Catch (VendingMachine::Free &){
+                    yield(4);
+
+                    if (card == wc){
+                        prt.print(Printer::Kind::Student, id, 'A', flavour, card->getBalance());
+                    }
+                    else if(card == gc){
+                        prt.print(Printer::Kind::Student, id, 'a', flavour, card->getBalance());
+                    }
+                }
+                _Catch (VendingMachine::Funds &){
+                    if(card == wc){
+                        cardOffice.transfer(id, vm->cost() + 5, card);
+                    }
+                }
+                _Catch (VendingMachine::Stock &){
+                    vm = nameServer.getMachine(id); // Get another vending machine
+                }
+            }
+            _Catch(WATCardOffice::Lost &){ // Catch courier exception if lost
+                prt.print(Printer::Kind::Student, id, 'L');
+                wc = cardOffice.create(id, 5); // Create 5$ WATCard
+            }
+        }
+    }
+
+    prt.print(Printer::Kind::Student, id, 'F');
 }  // Student::main
 
 // ---------------------------------
@@ -45,5 +110,4 @@ void Student::main() {
 // ---------------------------------
 Student::Student( Printer& prt, NameServer& nameServer, WATCardOffice& cardOffice, Groupoff& groupoff, unsigned int id, unsigned int maxPurchases ) : 
     prt( prt ), nameServer( nameServer ), cardOffice( cardOffice ), groupoff( groupoff ), id( id ), maxPurchases( maxPurchases ) {
-
 }  // Student::Student
