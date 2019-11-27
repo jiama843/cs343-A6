@@ -42,8 +42,9 @@ extern MPRNG mprng;  // global random number generator
 // -----------------------------------
 //  Constructor
 // -----------------------------------
-VendingMachine::VendingMachine( Printer& prt, NameServer& nameServer, unsigned int id, unsigned int sodaCost )
-    : prt( prt ), nameServer( nameServer ), id( id ), sodaCost( sodaCost ) {}
+VendingMachine::VendingMachine( Printer& prt, NameServer& nameServer, unsigned int id, unsigned int sodaCost ) : prt( prt ), nameServer( nameServer ), id( id ), sodaCost( sodaCost ) {
+    nameServer.VMregister( this );  // VendingMachines call VMregister to register themselves
+}  // VendingMachine::VendingMachine
 
 // -----------------------------------
 //  Mutex Methods
