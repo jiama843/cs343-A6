@@ -56,14 +56,18 @@ void BottlingPlant::main() {
 
             _Accept( ~BottlingPlant ) {
                 shouldThrowShutdown = true;
-                break;
+
+                // we want the Truck to find out that we are closing
+                _Accept( getShipment );
             }
             or _Accept( getShipment ) {
                 // shipment picked up by truck
                 prt.print( Printer::Kind::BottlingPlant, 'P' );
             }  // _Accept
-        } catch ( uMutexFailure::RendezvousFailure& ) {
+        }
+        _Catch( uMutexFailure::RendezvousFailure& ) {
             // so we know there is a Shutdown here
+            break;
         }  // try
 
     }  // for
@@ -94,6 +98,7 @@ void BottlingPlant::getShipment( unsigned int cargo[] ) {
      * down and no shipment is copied into the cargo array passed by the truck
      */
     if ( shouldThrowShutdown ) {
+        prt.print( Printer::Kind::BottlingPlant, 'X' );  // temp
         _Throw Shutdown();
     }  // if
 

@@ -53,6 +53,15 @@ void VendingMachine::buy( Flavours flavour, WATCard& card ) {
     // TODO: might need uCond for two consecutive buy case
     VendingMachine::flavour = flavour;
     VendingMachine::card    = &card;
+
+    // Check insufficient funds
+    if ( card.getBalance() < sodaCost ) _Throw Funds();
+
+    // Check insufficient stock
+    if ( stock[flavour] <= 0 ) _Throw Stock();
+
+    // Free?
+    if ( mprng( 1, 5 ) == 1 ) _Throw Free();
 }  // VendingMachine::buy
 
 unsigned int* VendingMachine::inventory() {
@@ -81,33 +90,29 @@ void VendingMachine::main() {
     prt.print( Printer::Kind::Vending, id, 'S', sodaCost );  // starting
 
     for ( ;; ) {
-        _Accept( ~VendingMachine ) {
-            break;
-        }
-        or _Accept( inventory ) {
-            prt.print( Printer::Kind::Vending, id, 'r' );  // start reloading by truck
-
-            // Can only buy after restocking is complete
-            _Accept( restocked ) {
-                prt.print( Printer::Kind::Vending, id, 'R' );  // complete reloading by truck
+        try {
+            _Accept( ~VendingMachine ) {
+                break;
             }
+            or _Accept( inventory ) {
+                prt.print( Printer::Kind::Vending, id, 'r' );  // start reloading by truck
+
+                // Can only buy after restocking is complete
+                _Accept( restocked ) {
+                    prt.print( Printer::Kind::Vending, id, 'R' );  // complete reloading by truck
+                }
+            }
+            or _Accept( buy ) {
+                card->withdraw( sodaCost );  // Debit WATcard
+                stock[flavour]--;            // Dispense soda
+
+                // student bought a soda
+                prt.print( Printer::Kind::Vending, id, 'B', flavour, stock[flavour] );
+            }  // _Accept
         }
-        or _Accept( buy ) {
-            // Check insufficient funds
-            if ( card->getBalance() < sodaCost ) _Throw Funds();
-
-            // Check insufficient stock
-            if ( stock[flavour] <= 0 ) _Throw Stock();
-
-            // Free?
-            if ( mprng( 1, 5 ) == 1 ) _Throw Free();
-
-            card->withdraw( sodaCost );  // Debit WATcard
-            stock[flavour]--;            // Dispense soda
-
-            // student bought a soda
-            prt.print( Printer::Kind::Vending, id, 'B', flavour, stock[flavour] );
-        }  // _Accept
+        _Catch( uMutexFailure::RendezvousFailure& ) {
+            // we failed to buy, so just go back to start of loop
+        }  // try
 
     }  // for
 

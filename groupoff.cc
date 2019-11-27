@@ -11,47 +11,51 @@
 
 */
 
-Groupoff::Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay )
-: prt(prt), numStudents(numStudents), sodaCost(sodaCost), groupoffDelay(groupoffDelay) {}
+Groupoff::Groupoff( Printer &prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay )
+    : prt( prt ), numStudents( numStudents ), sodaCost( sodaCost ), groupoffDelay( groupoffDelay ) {}
 
 Groupoff::~Groupoff() {
-  for(unsigned int i = 0; i < cardlist.size(); i++){
-    delete cardlist[i];
-  }
-}
+    for ( unsigned int i = 0; i < cardlist.size(); i++ ) {
+        delete cardlist[i];
+    }  // for
+}  // Groupoff::~Groupoff
 
-void Groupoff::main(){
-  prt.print(Printer::Kind::Groupoff, 'S');
-  for(unsigned int i = 0; i < numStudents; i++){
-    _Accept(giftCard);
-  }
+void Groupoff::main() {
+    prt.print( Printer::Kind::Groupoff, 'S' );
+    for ( unsigned int i = 0; i < numStudents; i++ ) {
+        _Accept( giftCard );
+    }  // for
 
-  for(;;){
-    _Accept(~Groupoff){
-      break;
-    }
-    _Else{
-      yield(groupoffDelay);
+    for ( ;; ) {
+        _Accept( ~Groupoff ) {
+            break;
+        }
+        _Else {
+            if ( fcards.empty() ) break;
 
-      // Choose future watcard that has not yet been assigned
-      unsigned int card_no = mprng(fcards.size() - 1);
+            yield( groupoffDelay );
 
-      prt.print(Printer::Kind::Groupoff, 'D', sodaCost);
+            // Choose future watcard that has not yet been assigned
+            unsigned int card_no = mprng( fcards.size() - 1 );
 
-      // Put real WATCard into random card
-      WATCard *card = new WATCard();
-      card->deposit(sodaCost);
-      cardlist.push_back(card);
+            prt.print( Printer::Kind::Groupoff, 'D', sodaCost );
 
-      fcards[card_no].delivery(card);
-      fcards.erase(fcards.begin() + card_no);
-    }
-  }
-  prt.print(Printer::Kind::Groupoff, 'F');
-}
+            // Put real WATCard into random card
+            WATCard *card = new WATCard();
+            card->deposit( sodaCost );
+            cardlist.push_back( card );
 
-WATCard::FWATCard Groupoff::giftCard(){
-  WATCard::FWATCard fcard;
-  fcards.push_back(fcard);
-  return fcard;
-}
+            fcards[card_no].delivery( card );
+            fcards.erase( fcards.begin() + card_no );
+        }  // _Accept
+
+    }  // for
+
+    prt.print( Printer::Kind::Groupoff, 'F' );
+}  // Groupoff::main
+
+WATCard::FWATCard Groupoff::giftCard() {
+    WATCard::FWATCard fcard;
+    fcards.push_back( fcard );
+    return fcard;
+}  // Groupoff::giftcard

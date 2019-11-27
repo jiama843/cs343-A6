@@ -54,49 +54,16 @@ void Student::main() {
 
         // Block until either card is available
         WATCard *card;
-        _Select( gc ) {
-            card = gc();
-        }
-        or _Select( wc ) {
-            card = wc();
-        }  // _Select
-
         for ( ;; ) {
-            // Attempt to buy soda
             try {
-                try {
-                    vm->buy( flavour, *card );
-
-                    if ( card == wc ) {
-                        prt.print( Printer::Kind::Student, id, 'B', flavour, card->getBalance() );  // bought soda
-                    } else if ( card == gc ) {
-                        prt.print( Printer::Kind::Student, id, 'G', flavour, card->getBalance() );  // gift-card soda
-
-                        // reset funds if giftcard
-                        gc.reset();
-                    }  // if
-
-                    break;
+                _Select( gc ) {
+                    card = gc();  // Groupoff never throws Lost
                 }
-                _Catch( VendingMachine::Free & ) {
-                    yield( 4 );
+                or _Select( wc ) {
+                    card = wc();
+                }  // _Select
 
-                    if ( card == wc ) {
-                        prt.print( Printer::Kind::Student, id, 'A', flavour, card->getBalance() );  // free soda, advertisement
-                    } else if ( card == gc ) {
-                        prt.print( Printer::Kind::Student, id, 'a', flavour, card->getBalance() );  // free soda, advertisement
-
-                    }  // if
-                }
-                _Catch( VendingMachine::Funds & ) {
-                    if ( card == wc ) {
-                        cardOffice.transfer( id, vm->cost() + 5, card );
-                    }  // if
-                }
-                _Catch( VendingMachine::Stock & ) {
-                    // Get another vending machine
-                    vm = nameServer.getMachine( id );
-                }  // _Catch
+                break;
             }
             _Catch( WATCardOffice::Lost & ) {  // Catch courier exception if lost
                 // WATCard lost
@@ -104,6 +71,44 @@ void Student::main() {
 
                 // Create 5$ WATCard
                 wc = cardOffice.create( id, 5 );
+            }  // _Catch
+
+        }  // for
+
+        for ( ;; ) {
+            // Attempt to buy soda
+            try {
+                vm->buy( flavour, *card );
+
+                if ( card == wc ) {
+                    prt.print( Printer::Kind::Student, id, 'B', flavour, card->getBalance() );  // bought soda
+                } else if ( card == gc ) {
+                    prt.print( Printer::Kind::Student, id, 'G', flavour, card->getBalance() );  // gift-card soda
+
+                    // reset funds if giftcard
+                    gc.reset();
+                }  // if
+
+                break;
+            }
+            _Catch( VendingMachine::Free & ) {
+                yield( 4 );
+
+                if ( card == wc ) {
+                    prt.print( Printer::Kind::Student, id, 'A', flavour, card->getBalance() );  // free soda, advertisement
+                } else if ( card == gc ) {
+                    prt.print( Printer::Kind::Student, id, 'a', flavour, card->getBalance() );  // free soda, advertisement
+
+                }  // if
+            }
+            _Catch( VendingMachine::Funds & ) {
+                if ( card == wc ) {
+                    cardOffice.transfer( id, vm->cost() + 5, card );
+                }  // if
+            }
+            _Catch( VendingMachine::Stock & ) {
+                // Get another vending machine
+                vm = nameServer.getMachine( id );
             }  // _Catch
 
         }  // for
