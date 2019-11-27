@@ -40,13 +40,15 @@ void BottlingPlant::main() {
              * periodically produce random new quantities of each flavour of soda,
              * [0, MaxShippedPerFlavour] per flavour.
              */
-            unsigned int sodaQuantity = mprng( maxShippedPerFlavour );
-            prt.print( Printer::Kind::BottlingPlant, 'G', sodaQuantity );  // generating soda
+            unsigned int numBottlesGenerated = 0;
+            for ( unsigned int i = 0; i < 4; i++ ) {
+                unsigned int quantity = mprng( maxShippedPerFlavour );
+                numBottlesGenerated += quantity;
 
-            inventory[0] = sodaQuantity;
-            inventory[1] = sodaQuantity;
-            inventory[2] = sodaQuantity;
-            inventory[3] = sodaQuantity;
+                inventory[i] = quantity;
+            }
+
+            prt.print( Printer::Kind::BottlingPlant, 'G', numBottlesGenerated );  // generating soda
 
             /*
              * To simulate a production run of soda, the bottling plant
@@ -98,7 +100,6 @@ void BottlingPlant::getShipment( unsigned int cargo[] ) {
      * down and no shipment is copied into the cargo array passed by the truck
      */
     if ( shouldThrowShutdown ) {
-        prt.print( Printer::Kind::BottlingPlant, 'X' );  // temp
         _Throw Shutdown();
     }  // if
 

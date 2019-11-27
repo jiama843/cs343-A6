@@ -1,8 +1,6 @@
 #ifndef PRINTER_H
 #define PRINTER_H
 
-// TODO: Includes
-
 _Monitor Printer {
     unsigned int numStudents;
     unsigned int numVendingMachines;

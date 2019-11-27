@@ -100,6 +100,9 @@ void Student::main() {
                 _Catch( VendingMachine::Stock & ) {
                     // Get another vending machine
                     vm = nameServer.getMachine( id );
+
+                    // selecting vending machine
+                    prt.print( Printer::Kind::Student, id, 'V', vm->getId() );
                 }  // _Catch
 
             }  // _Select

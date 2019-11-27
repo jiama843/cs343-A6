@@ -50,7 +50,6 @@ VendingMachine::VendingMachine( Printer& prt, NameServer& nameServer, unsigned i
 //  Mutex Methods
 // -----------------------------------
 void VendingMachine::buy( Flavours flavour, WATCard& card ) {
-    // TODO: might need uCond for two consecutive buy case
     VendingMachine::flavour = flavour;
     VendingMachine::card    = &card;
 

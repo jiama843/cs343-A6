@@ -43,13 +43,17 @@ void Truck::restock_vending( VendingMachine **vlist ) {
                 inv[j]++;
                 cargo[j]--;
             }  // for
-        }  // for
+        }      // for
 
         int b_remain = ( maxStockPerFlavour * 4 ) - ( inv[0] + inv[1] + inv[2] + inv[3] );
         if ( b_remain > 0 ) prt.print( Printer::Kind::Truck, 'U', lastVendingMachine, b_remain );  // unsuccessfully filled vending machine
 
-        prt.print( Printer::Kind::Truck, 'D', lastVendingMachine, cargo[0] + cargo[1] + cargo[2] + cargo[3] );  // end delivery to vending machine
+        int remaining_cargo = cargo[0] + cargo[1] + cargo[2] + cargo[3];
+        prt.print( Printer::Kind::Truck, 'D', lastVendingMachine, remaining_cargo );  // end delivery to vending machine
         vlist[lastVendingMachine]->restocked();
+
+        // if we don't have any more bottles to deliver, quit delivery
+        if ( remaining_cargo == 0 ) break;
     }  // for
 }  // Truck::restock_vending
 
@@ -61,7 +65,7 @@ void Truck::main() {
 
     try {
         for ( ;; ) {
-            yield( mprng( 1, 10 ) ); // yield from [1, 10] to get coffee
+            yield( mprng( 1, 10 ) );  // yield from [1, 10] to get coffee
 
             // clear list of soda (throw away out of date soda)
             cargo[0] = 0;
@@ -80,5 +84,5 @@ void Truck::main() {
     _Catch( BottlingPlant::Shutdown & ) {
         // handle Shutdown
         prt.print( Printer::Kind::Truck, 'F' );  // finished
-    }  // try
+    }                                            // try
 }  // Truck::main
