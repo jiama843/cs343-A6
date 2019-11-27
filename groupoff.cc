@@ -39,7 +39,7 @@ void Groupoff::main(){
       prt.print(Printer::Kind::Groupoff, 'D', sodaCost);
 
       // Put real WATCard into random card
-      WATCard::WATCard *card = new WATCard();
+      WATCard *card = new WATCard();
       card->deposit(sodaCost);
       cardlist.push_back(card);
 

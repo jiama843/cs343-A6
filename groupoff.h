@@ -15,8 +15,8 @@ _Task Groupoff {
 	unsigned int sodaCost;
 	unsigned int groupoffDelay;
 
-	vector<WATCard::WATCard*> cardlist; // list of pointers to watcards
-	vector<WATCard::FWATCard> fcards; // list of future watcards
+	std::vector<WATCard*> cardlist; // list of pointers to watcards
+	std::vector<WATCard::FWATCard> fcards; // list of future watcards
 	void main();
 
 public:
