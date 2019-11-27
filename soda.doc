@@ -1,0 +1,92 @@
+TEST DOCUMENTATION FOR SODA
+===========================
+The program takes 2 optional parameters as input:
+    1) config-file: the text (formatted) file containing the configuration constants
+    2) seed: starting seed for the random number generator
+
+This program simulates a simple concession service using the following objects:
+    1) Student: periodically buys some of their favourite soda from a vending machine
+    2) WATCard: manages the money associated with a card
+    3) WATCardOffice: used by a student to transfer funds from their bank account to their WATCard to buy a soda
+    4) Bank: manages student-account information for all students
+    5) Parent: periodically gives a random amount of money [$1, $3] to a random student
+    6) Groupoff: periodically puts a real WATCard with value SodaCost into a random future gift-card
+    7) VendingMachine: sells soda to students at some cost
+    8) NameServer: manages the vending-machine names
+    9) BottlingPlant: periodically produces random new quantities of each flavour of soda
+    10) Truck: moves soda from the bottling plant to the vending machines
+
+The program terminates once all of the students have purchased their specified number of bottles.
+
+USER INTERFACE TESTING
+    
+    TEST 1: Invalid Inputs
+    ----------------------
+        DATA DESCRIPTION
+        If a config-file is specified, then it must be a valid file. If a seed is specified, it must be
+        a positive number. We will test to make sure that the program halts in the case of invalid inputs.
+
+            1   ./soda 12345 1003
+            2   ./soda soda.config -1
+
+        Lines 1 of testing verifies that the program rejects an invalid file. Line 2 makes sure that a
+        positive seed is provided as a parameter.
+
+        RESULTS
+
+            Usage: ./soda [ config-file [ Seed ] ]
+
+        The program successfully rejects invalid inputs for both config-file and seed.
+
+
+    TEST 2: Missing Inputs
+    ----------------------
+        DATA DESCRIPTION
+        If a parameter is not specified, then the program must use a default
+        value for the missing parameter. Thus we will test to make sure that
+        the program successfully runs even with missing parameters.
+
+            1   ./soda
+
+        Line 1 checks that default values are being used for config-file.
+        A random seed is used for the test case.
+
+        RESULTS
+
+            TODO
+
+        It appears that the configuration values, such as $2 sodas, 2 students, 3 vending machines,
+        etc. were used as specified in the default configuration file; soda.config.
+                    
+
+ALGORITHM TESTING
+
+    TEST 1: One Student Test Case
+    -----------------------------
+        DATA DESCRIPTION
+        The first test case will test the program using inputs where the
+        number of tourists < tour group size and hence no tours can be started.
+
+            1   ./soda 1 3 2
+            2   ./soda 3 100 4
+
+        RESULTS
+
+            V0      V1      V2
+            ******* ******* *******
+            S
+            X
+            T
+            D       S
+                    X       S
+                    T
+                    D       X
+                            T
+                            D
+            *****************
+            All tours started
+
+        In each case, the output looks someting like this. The tourists start,
+        but immediately fail due to a quorum failure and then proceed to terminate.
+        The 'D' after the 'T' is printed in ONLY THE TASK implementation.
+        

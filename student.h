@@ -5,9 +5,7 @@
 #include "printer.h"
 #include "nameserver.h"
 #include "watcardoffice.h"
-#include "watcard.h"
 #include "groupoff.h"
-#include "vendingmachine.h"
 
 extern MPRNG mprng;
 
