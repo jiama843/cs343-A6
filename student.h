@@ -1,7 +1,6 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-// TODO: Includes
 #include "MPRNG.h"
 #include "printer.h"
 #include "nameserver.h"

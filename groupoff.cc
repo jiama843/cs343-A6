@@ -12,12 +12,17 @@
 */
 
 Groupoff::Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay )
-: prt(prt), numStudents(numStudents), sodaCost(sodaCost), groupoffDelay(groupoffDelay),
-cards(new WATCard::WATCard[numStudents]) {}
+: prt(prt), numStudents(numStudents), sodaCost(sodaCost), groupoffDelay(groupoffDelay) {}
+
+Groupoff::~Groupoff() {
+  for(unsigned int i = 0; i < cardlist.size(); i++){
+    delete cardlist[i];
+  }
+}
 
 void Groupoff::main(){
   prt.print(Printer::Kind::Groupoff, 'S');
-  for(int i = 0; i < numStudents; i++){
+  for(unsigned int i = 0; i < numStudents; i++){
     _Accept(giftCard);
   }
 
@@ -36,7 +41,9 @@ void Groupoff::main(){
       // Put real WATCard into random card
       WATCard::WATCard *card = new WATCard();
       card->deposit(sodaCost);
-      fcards[i].delivery(card);
+      cardlist.push_back(card);
+
+      fcards[card_no].delivery(card);
       fcards.erase(fcards.begin() + card_no);
     }
   }
@@ -44,7 +51,7 @@ void Groupoff::main(){
 }
 
 WATCard::FWATCard Groupoff::giftCard(){
-  fcard = WATCard::FWATCard;
+  WATCard::FWATCard fcard;
   fcards.push_back(fcard);
   return fcard;
 }

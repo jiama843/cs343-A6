@@ -10,16 +10,14 @@
 extern MPRNG mprng;
 
 _Task Groupoff {
-	int num_assigned = 0;
+	vector<WATCard::WATCard*> cardlist; // list of pointers to watcards
 	vector<WATCard::FWATCard> fcards; // list of future watcards
 	void main();
 
 public:
 	Groupoff( Printer & prt, unsigned int numStudents, unsigned int sodaCost, unsigned int groupoffDelay );
+	~Groupoff();
 	WATCard::FWATCard giftCard();
-
-private:
-	WATCard::FWATCard fcard;
 };
 
 #endif
