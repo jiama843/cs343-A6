@@ -27,8 +27,8 @@ MPRNG mprng;  // global random number generator
 // -----------------------------------
 int main( int argc, char* argv[] ) {
     // Default values
-    string configFile = "soda.config";  // contains the configuration constants
-    int    seed       = getpid();       // starting seed for the random number generator
+    char* configFile = "soda.config";  // contains the configuration constants
+    int   seed       = getpid();       // starting seed for the random number generator
 
     ConfigParms configParms;  // the struct that contains the configuration parameters
 

@@ -1,4 +1,5 @@
 #include "parent.h"
+#include "MPRNG.h"
 #include "printer.h"
 
 extern MPRNG mprng;  // global random number generator
