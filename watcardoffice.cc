@@ -68,7 +68,7 @@ void WATCardOffice::Courier::main() {
         args.card->deposit( args.amount );
 
         // 1 in 6 chance to lose WATCard
-        if ( mprng( 1, 6 ) == 1 ) {
+        if ( true /* mprng( 1, 6 ) == 1 */ ) {
             job->result.exception( new Lost() );
             prt.print( Printer::Kind::Courier, id, 'L', args.sid );  // lost WATCard card
         } else {

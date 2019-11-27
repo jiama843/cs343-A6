@@ -75,6 +75,7 @@ void Student::main() {
 
         }  // for
 
+        // TODO: catch Lost from transfer
         for ( ;; ) {
             // Attempt to buy soda
             try {

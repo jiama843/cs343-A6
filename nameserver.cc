@@ -33,6 +33,7 @@ NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned 
 
 NameServer::~NameServer() {
     delete[] vlist;
+    delete[] student_incr;
 }  // NameServer::~NameServer
 
 // -----------------------------------
