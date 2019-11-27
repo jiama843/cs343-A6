@@ -67,23 +67,23 @@ void Student::main() {
                     vm->buy(flavour, *card);
 
                     if (card == wc){
-                        prt.print(Printer::Kind::Student, 'B', id, flavour, card->getBalance());
+                        prt.print(Printer::Kind::Student, id, 'B', flavour, card->getBalance());
                     }
                     else if(card == gc){
-                        prt.print(Printer::Kind::Student, 'G', id, flavour, card->getBalance());
+                        prt.print(Printer::Kind::Student, id, 'G', flavour, card->getBalance());
                         gc.reset(); // Reset funds if giftcard
                     }
 
                     break;
                 }
                 _Catch (VendingMachine::Free &){
-                    yield(mprng(4, 4 * 10));
+                    yield(4);
 
                     if (card == wc){
-                        prt.print(Printer::Kind::Student, 'A', id, flavour, card->getBalance());
+                        prt.print(Printer::Kind::Student, id, 'A', flavour, card->getBalance());
                     }
                     else if(card == gc){
-                        prt.print(Printer::Kind::Student, 'a', id, flavour, card->getBalance());
+                        prt.print(Printer::Kind::Student, id, 'a', flavour, card->getBalance());
                     }
                 }
                 _Catch (VendingMachine::Funds &){
@@ -96,13 +96,13 @@ void Student::main() {
                 }
             }
             _Catch(WATCardOffice::Lost &){ // Catch courier exception if lost
-                prt.print(Printer::Kind::Student, 'L', id);
+                prt.print(Printer::Kind::Student, id, 'L');
                 wc = cardOffice.create(id, 5); // Create 5$ WATCard
             }
         }
     }
 
-    prt.print(Printer::Kind::Student, 'F', id);
+    prt.print(Printer::Kind::Student, id, 'F');
 }  // Student::main
 
 // ---------------------------------
